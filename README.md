@@ -66,19 +66,22 @@ open index.html
 
 
 ## 📁 프로젝트 구조
+
+\`\`\`
 2026-khuniv-NIC-team14/
-├── index.html # 홈
-├── lesson.html # 학습 화면
-├── summary.html # 정리하기 화면
-├── complete.html # 학습 완료 화면
-├── mypage.html # 마이페이지
-├── style.css # 공통 스타일
-├── script.js # AI 연동 공용 로직
-├── index.js / lesson.js # 화면별 로직
-├── config.example.js # API 키 설정 템플릿
-├── config.js # 실제 API 키 (git 미포함)
+├── index.html          # 홈
+├── lesson.html          # 학습 화면
+├── summary.html         # 정리하기 화면
+├── complete.html         # 학습 완료 화면
+├── mypage.html           # 마이페이지
+├── style.css              # 공통 스타일
+├── script.js               # AI 연동 공용 로직
+├── index.js / lesson.js    # 화면별 로직
+├── config.example.js        # API 키 설정 템플릿
+├── config.js                 # 실제 API 키 (git 미포함)
 └── docs/
-└── requirements.md # 요구사항
+    └── requirements.md      # 요구사항 정의서
+\`\`\`
 
 ## 👥 팀 소개
 
