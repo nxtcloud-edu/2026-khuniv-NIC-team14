@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>뉴스레슨 — 경제 뉴스 학습</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">NL</div>
+      <div class="brand-name">뉴스레슨</div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-link active" href="index.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5" /><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" /></svg></span>
+        홈
+      </a>
+      <a class="nav-link" href="lesson.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5c-1.5-1.2-3.6-1.7-6-1.7v13c2.4 0 4.5.5 6 1.7 1.5-1.2 3.6-1.7 6-1.7v-13c-2.4 0-4.5.5-6 1.7Z" /><path d="M12 6.5v13" /></svg></span>
+        학습
+      </a>
+      <a class="nav-link" href="summary.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18 10a2.4 2.4 0 0 0-4-4L4 16v4Z" /><path d="M13 7l4 4" /></svg></span>
+        정리하기
+      </a>
+      <a class="nav-link" href="mypage.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.2" /><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5" /></svg></span>
+        마이페이지
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      요약이 아니라 선별.<br />압축이 아니라 압축 해제.
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-container">
+
+      <header class="page-header">
+        <span class="page-eyebrow">경제 뉴스 학습</span>
+        <h1 class="page-title">경제 뉴스, 붙여넣고 제대로 이해해보세요</h1>
+        <p class="page-subtitle">AI가 기사에서 꼭 알아야 할 핵심 포인트만 골라 단계적으로 설명해드려요.</p>
+      </header>
+
+      <section class="card">
+        <h2 class="section-title">기사 본문 붙여넣기</h2>
+        <textarea
+          class="textarea"
+          placeholder="여기에 경제 뉴스 기사 본문을 붙여넣어 주세요. (최대 10,000자)"
+        ></textarea>
+        <div class="field-meta">
+          <span>0 / 10,000자</span>
+          <span>핵심 포인트 1~3개를 AI가 자동으로 선정해요</span>
+        </div>
+        <a href="lesson.html" class="btn btn-primary btn-block" style="margin-top: 20px;">
+          학습 시작하기
+        </a>
+      </section>
+
+      <section style="margin-top: 40px;">
+        <h2 class="section-title">최근 학습</h2>
+        <div class="list">
+
+          <div class="list-item">
+            <div class="list-item-top">
+              <div>
+                <p class="list-item-title">한국은행, 기준금리 3.25%로 동결</p>
+                <div class="list-item-tags">
+                  <span class="tag">기준금리</span>
+                  <span class="tag">통화정책</span>
+                </div>
+              </div>
+              <span class="list-item-date">2026.08.26</span>
+            </div>
+            <details>
+              <summary></summary>
+              <div class="note-box">
+                기준금리를 동결한 건 물가는 안정되고 있지만 가계부채 부담 때문에 섣불리 낮추기 어려운 상황이기 때문이라고 이해했다. 금리를 유지하면 대출 이자 부담은 그대로지만 원화 가치 방어에는 도움이 된다.
+              </div>
+            </details>
+          </div>
+
+          <div class="list-item">
+            <div class="list-item-top">
+              <div>
+                <p class="list-item-title">원/달러 환율, 1,380원대 돌파 배경은</p>
+                <div class="list-item-tags">
+                  <span class="tag">환율</span>
+                  <span class="tag">수출입</span>
+                </div>
+              </div>
+              <span class="list-item-date">2026.08.24</span>
+            </div>
+            <details>
+              <summary></summary>
+              <div class="note-box">
+                환율이 오르면 수출 기업엔 유리하지만 수입 물가가 올라 국내 물가에 부담을 준다는 점이 핵심이었다. 미국 금리와의 격차가 벌어지는 것도 원인 중 하나로 이해했다.
+              </div>
+            </details>
+          </div>
+
+          <div class="list-item">
+            <div class="list-item-top">
+              <div>
+                <p class="list-item-title">역대 최대 무역흑자, 반도체가 이끌었다</p>
+                <div class="list-item-tags">
+                  <span class="tag">무역수지</span>
+                  <span class="tag">반도체</span>
+                </div>
+              </div>
+              <span class="list-item-date">2026.08.20</span>
+            </div>
+            <details>
+              <summary></summary>
+              <div class="note-box">
+                무역흑자가 커진 건 반도체 수출 단가가 회복되면서 수출액이 늘었기 때문. 다만 특정 산업 의존도가 높아지는 건 리스크로 남는다고 정리했다.
+              </div>
+            </details>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+</div>
+</body>
+</html>
