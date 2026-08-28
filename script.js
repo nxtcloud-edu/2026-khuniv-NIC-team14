@@ -170,6 +170,11 @@ function parseLessonData(rawText) {
     throw new Error("Gemini 응답에 points 배열이 없습니다.");
   }
 
+  if (parsed.points.length > 3) {
+    console.warn("Gemini가 3개를 초과하는 포인트를 반환해 상위 3개만 사용합니다");
+    parsed.points = parsed.points.slice(0, 3);
+  }
+
   return {
     articleTitle: typeof parsed.articleTitle === "string" ? parsed.articleTitle.trim() : "",
     points: parsed.points,
