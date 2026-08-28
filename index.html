@@ -53,14 +53,15 @@
         <textarea
           class="textarea"
           placeholder="여기에 경제 뉴스 기사 본문을 붙여넣어 주세요. (최대 10,000자)"
+          maxlength="10000"
         ></textarea>
         <div class="field-meta">
-          <span>0 / 10,000자</span>
+          <span id="char-counter">0 / 10,000자</span>
           <span>핵심 포인트 1~3개를 AI가 자동으로 선정해요</span>
         </div>
-        <a href="lesson.html" class="btn btn-primary btn-block" style="margin-top: 20px;">
+        <button type="button" id="start-lesson-btn" class="btn btn-primary btn-block" style="margin-top: 20px;">
           학습 시작하기
-        </a>
+        </button>
       </section>
 
       <section style="margin-top: 40px;">
@@ -131,5 +132,8 @@
   </main>
 
 </div>
+<script src="config.js"></script>
+<script src="script.js"></script>
+<script src="index.js"></script>
 </body>
 </html>

@@ -43,30 +43,42 @@
     <div class="page-container">
 
       <header class="page-header">
-        <span class="page-eyebrow">한국은행, 기준금리 3.25%로 동결</span>
+        <span class="page-eyebrow">AI 핵심 포인트 분석</span>
         <h1 class="page-title">핵심 포인트를 하나씩 학습해보세요</h1>
         <p class="page-subtitle">쉬운 설명부터 기사 속 맥락, 경제적 영향까지 순서대로 확인해요.</p>
       </header>
 
-      <div class="progress-header">
+      <div class="progress-header" id="progress-header" style="display: none;">
         <span class="section-title" style="margin: 0;">핵심 포인트</span>
-        <span class="progress-count">1 / 2</span>
+        <span class="progress-count" id="progress-count">1 / 1</span>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" style="width: 50%;"></div>
+      <div class="progress-track" id="progress-track" style="display: none;">
+        <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
       </div>
 
-      <section class="card">
-        <h2 class="point-topic">기준금리</h2>
+      <section class="card state-card" id="loading-state" style="display: flex;">
+        <div class="loading-spinner"></div>
+        <p class="state-text">핵심 포인트를 분석하고 있어요...</p>
+      </section>
+
+      <section class="card state-card" id="error-state" style="display: none;">
+        <p class="state-text" id="error-message">핵심 포인트를 불러오지 못했어요. 잠시 후 다시 시도해주세요.</p>
+        <button type="button" id="retry-btn" class="btn btn-secondary" style="margin-top: 16px;">다시 시도</button>
+      </section>
+
+      <section class="card" id="lesson-card" style="display: none;">
+        <h2 class="point-topic" id="point-topic"></h2>
+
+        <div class="definition-row">
+          <span class="definition-label">개념 정의</span>
+          <p class="definition-text" id="step-definition"></p>
+        </div>
 
         <div class="step">
           <span class="step-badge">1</span>
           <div class="step-body">
             <p class="step-label">쉽게 말하면</p>
-            <p class="step-text">
-              기준금리는 한국은행이 은행들에게 돈을 빌려줄 때 적용하는 기본 이자율이에요.
-              이 금리가 오르내리면 대출 이자, 예금 이자 등 시중 금리 전체가 따라서 움직여요.
-            </p>
+            <p class="step-text" id="step-easy"></p>
           </div>
         </div>
 
@@ -74,10 +86,7 @@
           <span class="step-badge">2</span>
           <div class="step-body">
             <p class="step-label">이 기사에서는</p>
-            <p class="step-text">
-              한국은행이 기준금리를 3.25%로 유지하기로 했다는 내용이에요. 물가 상승세는 둔화되고 있지만,
-              가계부채 증가와 환율 불안 때문에 당장 금리를 낮추기는 어렵다고 판단한 거예요.
-            </p>
+            <p class="step-text" id="step-context"></p>
           </div>
         </div>
 
@@ -85,22 +94,22 @@
           <span class="step-badge">3</span>
           <div class="step-body">
             <p class="step-label">그래서 어떤 영향?</p>
-            <p class="step-text">
-              대출을 받은 사람들의 이자 부담은 당분간 그대로 유지돼요. 반면 금리를 유지하면 원화 가치를
-              방어하는 데 도움이 되어, 외국인 자금 유출 속도를 늦추는 효과가 있어요.
-            </p>
+            <ul class="step-text impact-list" id="step-impact-list"></ul>
           </div>
         </div>
       </section>
 
       <div class="btn-row">
-        <a href="index.html" class="btn btn-secondary">이전으로</a>
-        <a href="summary.html" class="btn btn-primary">다음 포인트</a>
+        <button type="button" id="prev-btn" class="btn btn-secondary">이전으로</button>
+        <button type="button" id="next-btn" class="btn btn-primary">다음 포인트</button>
       </div>
 
     </div>
   </main>
 
 </div>
+<script src="config.js"></script>
+<script src="script.js"></script>
+<script src="lesson.js"></script>
 </body>
 </html>
