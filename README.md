@@ -64,10 +64,6 @@ open index.html
 
 > Gemini API 키는 [Google AI Studio](https://aistudio.google.com)에서 무료로 발급받을 수 있습니다.
 
-
-## 📁 프로젝트 구조
-
-\`\`\`
 2026-khuniv-NIC-team14/
 ├── index.html          # 홈
 ├── lesson.html          # 학습 화면
@@ -81,7 +77,6 @@ open index.html
 ├── config.js                 # 실제 API 키 (git 미포함)
 └── docs/
     └── requirements.md      # 요구사항 정의서
-\`\`\`
 
 ## 👥 팀 소개
 
