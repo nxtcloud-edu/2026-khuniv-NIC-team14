@@ -64,21 +64,26 @@ open index.html
 
 > Gemini API 키는 [Google AI Studio](https://aistudio.google.com)에서 무료로 발급받을 수 있습니다.
 
-2026-khuniv-NIC-team14/
-├── index.html          # 홈
-├── lesson.html          # 학습 화면
-├── summary.html         # 정리하기 화면
-├── complete.html         # 학습 완료 화면
-├── mypage.html           # 마이페이지
-├── style.css              # 공통 스타일
-├── script.js               # AI 연동 공용 로직
-├── index.js / lesson.js    # 화면별 로직
-├── config.example.js        # API 키 설정 템플릿
-├── config.js                 # 실제 API 키 (git 미포함)
-└── docs/
-    └── requirements.md      # 요구사항 정의서
+## 📁 프로젝트 구조
 
-## 👥 팀 소개
+```
+2026-khuniv-NIC-team14/
+├── index.html               # 홈
+├── lesson.html               # 학습 화면
+├── summary.html              # 정리하기 화면
+├── complete.html              # 학습 완료 화면
+├── mypage.html                # 마이페이지
+├── style.css                   # 공통 스타일
+├── script.js                    # AI 연동 공용 로직
+├── index.js                      # 홈 화면 로직
+├── lesson.js                      # 학습 화면 로직
+├── config.example.js               # API 키 설정 템플릿
+├── config.js                        # 실제 API 키 (git 미포함)
+└── docs/
+    └── requirements.md              # 요구사항 정의서
+```
+
+## 👥 팀 소개 — Team MuBIG
 
 | 이름 | 소속 | 역할 |
 |---|---|---|
