@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>뉴스레슨 — 내 말로 정리하기</title>
+<title>뉴스레슨 — 기사 다시 이해하기</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -20,11 +20,11 @@
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5" /><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" /></svg></span>
         홈
       </a>
-      <a class="nav-link" href="lesson.html">
+      <a class="nav-link active" href="lesson.html">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5c-1.5-1.2-3.6-1.7-6-1.7v13c2.4 0 4.5.5 6 1.7 1.5-1.2 3.6-1.7 6-1.7v-13c-2.4 0-4.5.5-6 1.7Z" /><path d="M12 6.5v13" /></svg></span>
         학습
       </a>
-      <a class="nav-link active" href="summary.html">
+      <a class="nav-link" href="summary.html">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18 10a2.4 2.4 0 0 0-4-4L4 16v4Z" /><path d="M13 7l4 4" /></svg></span>
         정리하기
       </a>
@@ -43,42 +43,31 @@
     <div class="page-container">
 
       <header class="page-header">
-        <span class="page-eyebrow" id="page-eyebrow">경제 뉴스 정리</span>
-        <h1 class="page-title">이제 내 말로 정리해보세요</h1>
-        <p class="page-subtitle">배운 내용을 직접 정리하면 훨씬 오래 기억에 남아요. (인출 학습)</p>
+        <span class="page-eyebrow">기사 다시 이해하기</span>
+        <h1 class="page-title">이제 기사를 다시 살펴볼까요?</h1>
+        <p class="page-subtitle">방금 배운 핵심 개념을 바탕으로, 기사에서 실제로 일어난 일을 정리해드려요.</p>
       </header>
 
-      <div class="hint-box">
-        더 깊이 이해하고 싶다면 나만의 문장으로 정리해보세요.
-      </div>
-
-      <section class="card">
-        <h2 class="section-title">기사 정리하기</h2>
-        <textarea
-          class="textarea"
-          id="summary-textarea"
-          placeholder="이 기사에서 배운 핵심 포인트와 그 의미를 자신의 언어로 정리해보세요."
-        ></textarea>
-        <div class="field-meta">
-          <span id="summary-char-count">0자 작성됨</span>
-          <span>짧아도 괜찮아요, 내 생각으로 적어보세요</span>
-        </div>
-
-        <div style="margin-top: 22px;">
-          <p class="step-label" style="margin-bottom: 10px;">이런 내용이 들어가면 좋아요</p>
-          <div class="chip-row" id="chip-row">
-            <span class="chip"><span class="chip-dot"></span>학습한 핵심 포인트</span>
-          </div>
-        </div>
-
-        <div class="hint-box">
-          정리를 마치면 원문 기사, 학습 포인트와 함께 마이페이지에 저장돼요.
-        </div>
+      <section class="card state-card" id="loading-state" style="display: flex;">
+        <div class="loading-spinner"></div>
+        <p class="state-text">기사 흐름을 다시 정리하고 있어요...</p>
       </section>
 
-      <div class="btn-row">
-        <button type="button" id="prev-btn" class="btn btn-secondary">이전으로</button>
-        <button type="button" id="finish-btn" class="btn btn-primary">학습 완료</button>
+      <section class="card state-card" id="error-state" style="display: none;">
+        <p class="state-text" id="error-message">기사 요약을 불러오지 못했어요. 잠시 후 다시 시도해주세요.</p>
+        <button type="button" id="retry-btn" class="btn btn-secondary" style="margin-top: 16px;">다시 시도</button>
+      </section>
+
+      <section class="card" id="overview-card" style="display: none;">
+        <div class="overview-text" id="overview-text"></div>
+      </section>
+
+      <p class="card-disclaimer" id="overview-disclaimer" style="display: none;">
+        ※ 본 요약에는 글을 작성한 기자의 해석 또는 의견이 포함될 수 있습니다.
+      </p>
+
+      <div class="btn-row" id="overview-actions" style="display: none;">
+        <button type="button" id="next-btn" class="btn btn-primary btn-block">퀴즈 풀러 가기</button>
       </div>
 
     </div>
@@ -87,6 +76,6 @@
 </div>
 <script src="config.js"></script>
 <script src="script.js"></script>
-<script src="summary.js"></script>
+<script src="overview.js"></script>
 </body>
 </html>

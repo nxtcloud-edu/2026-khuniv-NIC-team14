@@ -24,4 +24,27 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.setItem(ARTICLE_STORAGE_KEY, text);
     window.location.href = "lesson.html";
   });
+
+  renderRecentList();
 });
+
+function renderRecentList() {
+  const container = document.getElementById("recent-list");
+  if (!container) return;
+
+  const history = getHistory();
+
+  if (history.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        아직 학습한 뉴스가 없어요. 첫 기사를 붙여넣어보세요!
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = history
+    .slice(0, 5)
+    .map((item) => formatHistoryItemHtml(item))
+    .join("");
+}
