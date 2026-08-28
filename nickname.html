@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>뉴스레슨 — 닉네임 설정</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="standalone-shell">
+  <div class="standalone-card">
+    <h1 class="page-title standalone-title">어떻게 불러드릴까요?</h1>
+    <p class="page-subtitle standalone-subtitle">닉네임을 입력하면 학습 기록에 표시돼요.</p>
+
+    <form id="nickname-form" class="nickname-form" novalidate>
+      <input
+        type="text"
+        id="nickname-input"
+        class="text-input"
+        placeholder="예: 뉴스러버"
+        maxlength="20"
+        autocomplete="off"
+      />
+      <p class="field-error" id="nickname-error">닉네임을 입력해주세요</p>
+      <button type="submit" class="btn btn-primary btn-block">시작하기</button>
+    </form>
+  </div>
+</div>
+<script src="storage.js"></script>
+<script src="nickname.js"></script>
+</body>
+</html>

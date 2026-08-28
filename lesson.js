@@ -1,8 +1,5 @@
 // lesson.html — 저장된 기사로 Gemini API를 호출하고 핵심 포인트를 카드로 보여줌
 
-const POINTS_CACHE_KEY = "nl_lesson_points";
-const POINTS_CACHE_FOR_KEY = "nl_lesson_points_for";
-
 document.addEventListener("DOMContentLoaded", () => {
   const loadingState = document.getElementById("loading-state");
   const errorState = document.getElementById("error-state");
@@ -55,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     prevBtn.textContent = currentIndex === 0 ? "이전으로" : "이전 포인트";
-    nextBtn.textContent = currentIndex === total - 1 ? "정리하러 가기" : "다음 포인트";
+    nextBtn.textContent = currentIndex === total - 1 ? "기사 다시 살펴보기" : "다음 포인트";
   }
 
   prevBtn.addEventListener("click", () => {
@@ -69,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   nextBtn.addEventListener("click", () => {
     if (currentIndex === points.length - 1) {
-      window.location.href = "summary.html";
+      window.location.href = "overview.html";
       return;
     }
     currentIndex += 1;
@@ -80,22 +77,22 @@ document.addEventListener("DOMContentLoaded", () => {
     loadAndRender();
   });
 
-  function readCachedPoints(articleText) {
-    const cachedFor = sessionStorage.getItem(POINTS_CACHE_FOR_KEY);
+  function readCachedLesson(articleText) {
+    const cachedFor = sessionStorage.getItem(LESSON_POINTS_FOR_KEY);
     if (cachedFor !== articleText) return null;
-    const cached = sessionStorage.getItem(POINTS_CACHE_KEY);
+    const cached = sessionStorage.getItem(LESSON_POINTS_KEY);
     if (!cached) return null;
     try {
       const parsed = JSON.parse(cached);
-      return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+      return Array.isArray(parsed.points) && parsed.points.length > 0 ? parsed : null;
     } catch {
       return null;
     }
   }
 
-  function cachePoints(articleText, fetchedPoints) {
-    sessionStorage.setItem(POINTS_CACHE_FOR_KEY, articleText);
-    sessionStorage.setItem(POINTS_CACHE_KEY, JSON.stringify(fetchedPoints));
+  function cacheLesson(articleText, data) {
+    sessionStorage.setItem(LESSON_POINTS_FOR_KEY, articleText);
+    sessionStorage.setItem(LESSON_POINTS_KEY, JSON.stringify(data));
   }
 
   async function loadAndRender() {
@@ -111,9 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const cached = readCachedPoints(articleText);
+    const cached = readCachedLesson(articleText);
     if (cached) {
-      points = cached;
+      if (cached.articleTitle) sessionStorage.setItem(ARTICLE_TITLE_KEY, cached.articleTitle);
+      points = cached.points;
       currentIndex = 0;
       showState("content");
       renderPoint();
@@ -123,9 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
     showState("loading");
 
     try {
-      const fetchedPoints = await fetchLessonPoints(articleText);
-      cachePoints(articleText, fetchedPoints);
-      points = fetchedPoints;
+      const data = await fetchLessonData(articleText);
+      cacheLesson(articleText, data);
+      if (data.articleTitle) sessionStorage.setItem(ARTICLE_TITLE_KEY, data.articleTitle);
+      points = data.points;
       currentIndex = 0;
       showState("content");
       renderPoint();

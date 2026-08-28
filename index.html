@@ -4,6 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>뉴스레슨 — 경제 뉴스 학습</title>
+<script src="storage.js"></script>
+<script>
+  // 닉네임 없이 직접 접근하면 온보딩(splash)으로 되돌린다.
+  if (!getNickname()) {
+    window.location.replace("splash.html");
+  }
+</script>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -66,66 +73,7 @@
 
       <section style="margin-top: 40px;">
         <h2 class="section-title">최근 학습</h2>
-        <div class="list">
-
-          <div class="list-item">
-            <div class="list-item-top">
-              <div>
-                <p class="list-item-title">한국은행, 기준금리 3.25%로 동결</p>
-                <div class="list-item-tags">
-                  <span class="tag">기준금리</span>
-                  <span class="tag">통화정책</span>
-                </div>
-              </div>
-              <span class="list-item-date">2026.08.26</span>
-            </div>
-            <details>
-              <summary></summary>
-              <div class="note-box">
-                기준금리를 동결한 건 물가는 안정되고 있지만 가계부채 부담 때문에 섣불리 낮추기 어려운 상황이기 때문이라고 이해했다. 금리를 유지하면 대출 이자 부담은 그대로지만 원화 가치 방어에는 도움이 된다.
-              </div>
-            </details>
-          </div>
-
-          <div class="list-item">
-            <div class="list-item-top">
-              <div>
-                <p class="list-item-title">원/달러 환율, 1,380원대 돌파 배경은</p>
-                <div class="list-item-tags">
-                  <span class="tag">환율</span>
-                  <span class="tag">수출입</span>
-                </div>
-              </div>
-              <span class="list-item-date">2026.08.24</span>
-            </div>
-            <details>
-              <summary></summary>
-              <div class="note-box">
-                환율이 오르면 수출 기업엔 유리하지만 수입 물가가 올라 국내 물가에 부담을 준다는 점이 핵심이었다. 미국 금리와의 격차가 벌어지는 것도 원인 중 하나로 이해했다.
-              </div>
-            </details>
-          </div>
-
-          <div class="list-item">
-            <div class="list-item-top">
-              <div>
-                <p class="list-item-title">역대 최대 무역흑자, 반도체가 이끌었다</p>
-                <div class="list-item-tags">
-                  <span class="tag">무역수지</span>
-                  <span class="tag">반도체</span>
-                </div>
-              </div>
-              <span class="list-item-date">2026.08.20</span>
-            </div>
-            <details>
-              <summary></summary>
-              <div class="note-box">
-                무역흑자가 커진 건 반도체 수출 단가가 회복되면서 수출액이 늘었기 때문. 다만 특정 산업 의존도가 높아지는 건 리스크로 남는다고 정리했다.
-              </div>
-            </details>
-          </div>
-
-        </div>
+        <div class="list" id="recent-list"></div>
       </section>
 
     </div>

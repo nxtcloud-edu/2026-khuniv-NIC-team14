@@ -15,6 +15,10 @@
       <div class="brand-name">뉴스레슨</div>
     </div>
 
+    <div class="sidebar-user" id="sidebar-user">
+      <span class="sidebar-user-name" id="sidebar-user-name">게스트</span>님의 학습 기록
+    </div>
+
     <nav class="nav">
       <a class="nav-link" href="index.html">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5" /><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" /></svg></span>
@@ -44,96 +48,42 @@
 
       <header class="page-header">
         <span class="page-eyebrow">마이페이지</span>
-        <h1 class="page-title">지금까지의 학습 기록이에요</h1>
+        <h1 class="page-title" id="mypage-title">지금까지의 학습 기록이에요</h1>
         <p class="page-subtitle">꾸준히 정리할수록 경제 뉴스가 익숙해져요.</p>
       </header>
 
       <div class="stat-grid">
         <div class="stat-card">
-          <div class="stat-value">12<span class="stat-unit">건</span></div>
+          <div class="stat-value" id="stat-summaries">0<span class="stat-unit">건</span></div>
           <p class="stat-label">직접 정리한 뉴스 수</p>
         </div>
         <div class="stat-card">
-          <div class="stat-value">27<span class="stat-unit">개</span></div>
+          <div class="stat-value" id="stat-points">0<span class="stat-unit">개</span></div>
           <p class="stat-label">이해한 핵심 포인트 수</p>
         </div>
         <div class="stat-card">
-          <div class="stat-value">4<span class="stat-unit">회</span></div>
+          <div class="stat-value" id="stat-weekly">0<span class="stat-unit">회</span></div>
           <p class="stat-label">이번 주 학습 수</p>
         </div>
         <div class="stat-card">
-          <div class="stat-value">6<span class="stat-unit">일</span></div>
+          <div class="stat-value" id="stat-streak">0<span class="stat-unit">일</span></div>
           <p class="stat-label">연속 학습일</p>
         </div>
       </div>
 
       <section>
-        <h2 class="section-title">최근 학습한 뉴스</h2>
-        <div class="list">
-
-          <div class="list-item">
-            <div class="list-item-top">
-              <div>
-                <p class="list-item-title">한국은행, 기준금리 3.25%로 동결</p>
-                <div class="list-item-tags">
-                  <span class="tag">기준금리</span>
-                  <span class="tag">통화정책</span>
-                </div>
-              </div>
-              <span class="list-item-date">2026.08.26</span>
-            </div>
-            <details>
-              <summary></summary>
-              <div class="note-box">
-                기준금리를 동결한 건 물가는 안정되고 있지만 가계부채 부담 때문에 섣불리 낮추기 어려운 상황이기 때문이라고 이해했다. 금리를 유지하면 대출 이자 부담은 그대로지만 원화 가치 방어에는 도움이 된다.
-              </div>
-            </details>
-          </div>
-
-          <div class="list-item">
-            <div class="list-item-top">
-              <div>
-                <p class="list-item-title">원/달러 환율, 1,380원대 돌파 배경은</p>
-                <div class="list-item-tags">
-                  <span class="tag">환율</span>
-                  <span class="tag">수출입</span>
-                </div>
-              </div>
-              <span class="list-item-date">2026.08.24</span>
-            </div>
-            <details>
-              <summary></summary>
-              <div class="note-box">
-                환율이 오르면 수출 기업엔 유리하지만 수입 물가가 올라 국내 물가에 부담을 준다는 점이 핵심이었다. 미국 금리와의 격차가 벌어지는 것도 원인 중 하나로 이해했다.
-              </div>
-            </details>
-          </div>
-
-          <div class="list-item">
-            <div class="list-item-top">
-              <div>
-                <p class="list-item-title">역대 최대 무역흑자, 반도체가 이끌었다</p>
-                <div class="list-item-tags">
-                  <span class="tag">무역수지</span>
-                  <span class="tag">반도체</span>
-                </div>
-              </div>
-              <span class="list-item-date">2026.08.20</span>
-            </div>
-            <details>
-              <summary></summary>
-              <div class="note-box">
-                무역흑자가 커진 건 반도체 수출 단가가 회복되면서 수출액이 늘었기 때문. 다만 특정 산업 의존도가 높아지는 건 리스크로 남는다고 정리했다.
-              </div>
-            </details>
-          </div>
-
+        <div class="section-title">
+          <span>최근 학습한 뉴스</span>
+          <button type="button" id="reset-history-btn" class="btn btn-ghost">학습 기록 초기화</button>
         </div>
+        <div class="list" id="mypage-recent-list"></div>
       </section>
 
     </div>
   </main>
 
 </div>
+<script src="storage.js"></script>
+<script src="mypage.js"></script>
 </body>
 </html>
