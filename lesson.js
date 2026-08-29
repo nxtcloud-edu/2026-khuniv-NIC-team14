@@ -19,9 +19,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const prevBtn = document.getElementById("prev-btn");
   const nextBtn = document.getElementById("next-btn");
+  const reviewBadge = document.getElementById("review-badge");
 
   let points = [];
   let currentIndex = 0;
+
+  // "최근 학습 다시보기"로 진입한 경우, 저장된 기록의 데이터를 lesson/overview/quiz.html이
+  // 공유하는 sessionStorage 캐시 키에 그대로 채워 넣는다. 이렇게 하면 각 페이지의 기존
+  // "캐시가 있으면 재사용, 없으면 Gemini 호출" 로직이 그대로 재사용되어 API를 다시 부르지 않는다.
+  function seedReviewSession(entry) {
+    const articleText = entry.articleText || "";
+    sessionStorage.setItem(ARTICLE_STORAGE_KEY, articleText);
+    if (entry.articleTitle) {
+      sessionStorage.setItem(ARTICLE_TITLE_KEY, entry.articleTitle);
+    }
+
+    sessionStorage.setItem(LESSON_POINTS_FOR_KEY, articleText);
+    sessionStorage.setItem(
+      LESSON_POINTS_KEY,
+      JSON.stringify({ articleTitle: entry.articleTitle || "", points: entry.points || [] })
+    );
+
+    if (typeof entry.overview === "string" && entry.overview.trim()) {
+      sessionStorage.setItem(OVERVIEW_DATA_FOR_KEY, articleText);
+      sessionStorage.setItem(OVERVIEW_DATA_KEY, entry.overview);
+    } else {
+      sessionStorage.removeItem(OVERVIEW_DATA_FOR_KEY);
+      sessionStorage.removeItem(OVERVIEW_DATA_KEY);
+    }
+
+    if (Array.isArray(entry.quiz) && entry.quiz.length > 0) {
+      sessionStorage.setItem(QUIZ_DATA_FOR_KEY, articleText);
+      sessionStorage.setItem(QUIZ_DATA_KEY, JSON.stringify(entry.quiz));
+    } else {
+      sessionStorage.removeItem(QUIZ_DATA_FOR_KEY);
+      sessionStorage.removeItem(QUIZ_DATA_KEY);
+    }
+
+    sessionStorage.setItem(SUMMARY_TEXT_KEY, entry.summary || "");
+  }
+
+  if (isReviewMode()) {
+    if (reviewBadge) reviewBadge.style.display = "inline-flex";
+
+    const entry = getHistoryItemById(getReviewId());
+    if (entry && entry.articleText && Array.isArray(entry.points) && entry.points.length > 0) {
+      seedReviewSession(entry);
+    } else {
+      // 다시보기할 기록을 찾지 못하면 review 모드를 종료하고 일반 흐름으로 진행한다.
+      endReviewMode();
+    }
+  }
 
   function showState(state) {
     loadingState.style.display = state === "loading" ? "flex" : "none";

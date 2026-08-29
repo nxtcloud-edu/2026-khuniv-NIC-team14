@@ -11,7 +11,7 @@
 
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">NL</div>
+      <img src="assets/logo-sidebar.png" alt="뉴스레슨 로고" class="brand-mark" />
       <div class="brand-name">뉴스레슨</div>
     </div>
 
@@ -27,6 +27,10 @@
       <a class="nav-link active" href="summary.html">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18 10a2.4 2.4 0 0 0-4-4L4 16v4Z" /><path d="M13 7l4 4" /></svg></span>
         정리하기
+      </a>
+      <a class="nav-link" href="chatbot.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16a1 1 0 0 1 1 1V15a1 1 0 0 1-1 1H9l-4.5 4V16H4a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1Z" /></svg></span>
+        챗봇
       </a>
       <a class="nav-link" href="mypage.html">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.2" /><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5" /></svg></span>
@@ -44,6 +48,7 @@
 
       <header class="page-header">
         <span class="page-eyebrow" id="page-eyebrow">경제 뉴스 정리</span>
+        <span class="review-badge" id="review-badge">🔁 다시보기</span>
         <h1 class="page-title">이제 내 말로 정리해보세요</h1>
         <p class="page-subtitle">배운 내용을 직접 정리하면 훨씬 오래 기억에 남아요. (인출 학습)</p>
       </header>
@@ -87,6 +92,7 @@
 </div>
 <script src="config.js"></script>
 <script src="script.js"></script>
+<script src="storage.js"></script>
 <script src="summary.js"></script>
 </body>
 </html>

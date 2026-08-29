@@ -44,4 +44,5 @@ function renderRecentList() {
   }
 
   container.innerHTML = history.map((item) => formatHistoryItemHtml(item)).join("");
+  attachHistoryListNavigation(container);
 }

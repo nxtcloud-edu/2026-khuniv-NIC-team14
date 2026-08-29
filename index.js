@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
       textarea.focus();
       return;
     }
+    endReviewMode();
     sessionStorage.setItem(ARTICLE_STORAGE_KEY, text);
     window.location.href = "lesson.html";
   });
@@ -47,4 +48,5 @@ function renderRecentList() {
     .slice(0, 5)
     .map((item) => formatHistoryItemHtml(item))
     .join("");
+  attachHistoryListNavigation(container);
 }

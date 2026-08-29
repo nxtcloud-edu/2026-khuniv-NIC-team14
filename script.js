@@ -1,5 +1,5 @@
 // 뉴스레슨 — Gemini API 연동 공통 모듈
-// index.html, lesson.html, quiz.html, summary.html, complete.html에서 공유해서 사용합니다.
+// index.html, lesson.html, quiz.html, summary.html, complete.html, chatbot.html에서 공유해서 사용합니다.
 
 const GEMINI_MODEL = "gemini-3.6-flash";
 const GEMINI_ENDPOINT =
@@ -22,6 +22,16 @@ const QUIZ_DATA_KEY = "nl_quiz_data";
 const QUIZ_DATA_FOR_KEY = "nl_quiz_data_for";
 const QUIZ_RESULT_KEY = "nl_quiz_result";
 const SUMMARY_TEXT_KEY = "nl_summary_text";
+const CHATBOT_HISTORY_KEY = "nl_chatbot_history";
+
+const CHATBOT_SYSTEM_PROMPT = `당신은 경제 상식을 쉽게 설명해주는 AI 튜터입니다.
+사용자의 경제 관련 질문에 대해 정확하고 이해하기 쉽게 답변하세요.
+
+원칙:
+- 전공 용어를 사용할 때는 간단히 풀어서 설명하세요
+- 답변은 너무 길지 않게, 핵심 위주로 3~5문장 이내로 작성하세요
+- 경제와 무관한 질문(잡담, 다른 주제)이 오면 정중하게 경제 관련 질문으로 유도하세요
+- 확실하지 않은 사실(최신 수치, 특정 날짜의 정확한 통계 등)에 대해서는 단정적으로 말하지 말고, 일반적인 원리 위주로 설명하세요`;
 
 function buildLessonPrompt(articleText) {
   return `당신은 경제 뉴스 학습을 도와주는 AI 튜터입니다.
@@ -116,18 +126,14 @@ function buildOverviewPrompt(articleText, points) {
   );
 
   return `당신은 경제 뉴스 학습을 도와주는 AI 튜터입니다.
-사용자는 방금 이 기사를 이해하는 데 필요한 핵심 개념들을 학습했습니다. 이제 그 개념을 바탕으로 기사 전체에서 실제로 일어난 사건과 흐름을 3개의 문단으로 요약하세요.
+사용자는 방금 이 기사를 이해하는 데 필요한 핵심 개념들을 학습했습니다. 이제 그 개념을 바탕으로 기사에서 실제로 일어난 일을 5줄 이내로 요약하세요.
 
 작성 원칙:
-- 이 요약은 "이 기사에서 무슨 일이 있었는가"에 집중하세요. 이미 학습한 개념의 정의를 다시 설명하지 말고, 그 개념이 실제 사건 전개 속에서 어떻게 작동했는지 자연스럽게 녹여서 설명하세요.
-- 1문단: 이 뉴스의 핵심 사실 — 누가, 무엇을, 언제, 왜 했는지
-- 2문단: 그 결정/사건이 나오게 된 배경이나 경위, 학습한 개념이 여기서 어떻게 작용하는지
-- 3문단: 이 사건이 앞으로 어떤 흐름으로 이어질지, 어떤 의미를 가지는지
-- 경제 지식이 없는 입문자도 이해할 수 있게 자연스러운 문체로 쓰되, 과도하게 쉬운 단어로 낮추지는 마세요.
+기사에서 실제로 일어난 일을 5줄 이내로 요약하세요. 문단 구분 없이, 핵심 사실 위주로 간결하게 정리하세요. 각 줄은 하나의 핵심 사실을 담아야 하며, 이미 학습한 개념의 정의를 반복하지 마세요. 경제 지식이 없는 입문자도 이해할 수 있게 자연스러운 문체로 쓰되, 과도하게 쉬운 단어로 낮추지는 마세요.
 
 출력은 반드시 아래 JSON 형식으로만 출력하세요.
 {
-  "overview": "3문단 요약 (문단 사이는 줄바꿈 두 번으로 구분)"
+  "overview": "5줄 이내 요약 (각 줄은 줄바꿈으로 구분)"
 }
 
 기사 본문:
@@ -275,4 +281,45 @@ async function fetchQuizQuestions(articleText, points) {
 async function fetchOverviewSummary(articleText, points) {
   const rawText = await callGemini(buildOverviewPrompt(articleText, points));
   return parseOverviewData(rawText);
+}
+
+async function callGeminiChat(messages) {
+  const apiKey = getApiKeyOrThrow();
+
+  const contents = messages.map((msg) => ({
+    role: msg.role === "user" ? "user" : "model",
+    parts: [{ text: msg.text }],
+  }));
+
+  let response;
+  try {
+    response = await fetch(`${GEMINI_ENDPOINT}?key=${encodeURIComponent(apiKey)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: CHATBOT_SYSTEM_PROMPT }] },
+        contents,
+      }),
+    });
+  } catch (err) {
+    throw new Error("네트워크 오류로 Gemini API 요청에 실패했습니다: " + err.message);
+  }
+
+  if (!response.ok) {
+    const errorBody = await response.text().catch(() => "");
+    throw new Error(
+      `Gemini API 요청 실패 (status ${response.status}): ${errorBody}`
+    );
+  }
+
+  const data = await response.json();
+  const text = extractGeminiText(data).trim();
+  if (!text) {
+    throw new Error("Gemini 응답이 비어 있습니다.");
+  }
+  return text;
+}
+
+async function fetchChatReply(messages) {
+  return callGeminiChat(messages);
 }
