@@ -14,6 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const revealHint = document.getElementById("reveal-hint");
   const nextArea = document.getElementById("next-area");
   const nextBtn = document.getElementById("next-btn");
+  const reviewBadge = document.getElementById("review-badge");
+
+  if (isReviewMode() && reviewBadge) {
+    reviewBadge.style.display = "inline-flex";
+  }
 
   let questions = [];
   let userAnswers = [];
@@ -200,6 +205,15 @@ document.addEventListener("DOMContentLoaded", () => {
       questions = cachedQuiz;
       showState("content");
       renderQuiz();
+      return;
+    }
+
+    if (isReviewMode()) {
+      goToWithMessage(
+        "mypage.html",
+        "마이페이지로 가기",
+        "이 기록에는 저장된 퀴즈가 없어요."
+      );
       return;
     }
 

@@ -6,6 +6,32 @@ const HISTORY_STORAGE_KEY = "newsLessonHistory";
 const STATS_STORAGE_KEY = "newsLessonStats";
 const NICKNAME_STORAGE_KEY = "newsLessonNickname";
 
+// ---------------------------------------------------------------------------
+// "최근 학습 다시보기" 모드 — sessionStorage 플래그.
+// true인 동안 lesson/overview/quiz.html은 Gemini를 다시 호출하지 않고
+// newsLessonHistory에 저장된 기록 데이터를 그대로 재사용한다.
+// ---------------------------------------------------------------------------
+const REVIEW_MODE_KEY = "nl_review_mode";
+const REVIEW_ID_KEY = "nl_review_id";
+
+function isReviewMode() {
+  return sessionStorage.getItem(REVIEW_MODE_KEY) === "true";
+}
+
+function getReviewId() {
+  return sessionStorage.getItem(REVIEW_ID_KEY) || "";
+}
+
+function startReviewMode(id) {
+  sessionStorage.setItem(REVIEW_MODE_KEY, "true");
+  sessionStorage.setItem(REVIEW_ID_KEY, id);
+}
+
+function endReviewMode() {
+  sessionStorage.removeItem(REVIEW_MODE_KEY);
+  sessionStorage.removeItem(REVIEW_ID_KEY);
+}
+
 function getNickname() {
   return (localStorage.getItem(NICKNAME_STORAGE_KEY) || "").trim();
 }
@@ -17,7 +43,7 @@ function setNickname(nickname) {
 function getHistory() {
   try {
     const parsed = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || "[]");
-    return Array.isArray(parsed) ? parsed : [];
+    return ensureHistoryIds(Array.isArray(parsed) ? parsed : []);
   } catch {
     return [];
   }
@@ -25,6 +51,40 @@ function getHistory() {
 
 function saveHistory(history) {
   localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+}
+
+// 이 기능 이전에 저장된 기록에는 id가 없을 수 있으므로, 없으면 채워 넣고
+// 즉시 영구 저장한다. "다시보기" 클릭 시 기록을 식별하는 데 id가 필요하다.
+function ensureHistoryIds(history) {
+  let changed = false;
+  history.forEach((item, index) => {
+    if (!item.id) {
+      item.id = `legacy-${Date.now()}-${index}`;
+      changed = true;
+    }
+  });
+  if (changed) saveHistory(history);
+  return history;
+}
+
+function getHistoryItemById(id) {
+  if (!id) return null;
+  return getHistory().find((item) => item.id === id) || null;
+}
+
+// review 모드로 학습 완료 시 새 기록을 추가하는 대신 기존 기록을 갱신한다
+// (통계가 중복으로 늘어나지 않도록).
+function updateHistoryEntry(id, patch) {
+  const history = getHistory();
+  const index = history.findIndex((item) => item.id === id);
+  if (index === -1) return null;
+
+  history[index] = { ...history[index], ...patch };
+  saveHistory(history);
+
+  const stats = computeStats(history);
+  localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+  return history[index];
 }
 
 function computeStreakDays(dateStrings) {
@@ -104,12 +164,20 @@ function formatHistoryItemHtml(item) {
          <div class="note-box">${escapeHtmlText(item.summary)}</div>
        </details>`
     : "";
+  const titleText = escapeHtmlText(item.title || "제목 없음");
+  const historyId = escapeHtmlText(item.id || "");
 
   return `
-    <div class="list-item">
+    <div
+      class="list-item list-item-clickable"
+      data-history-id="${historyId}"
+      role="button"
+      tabindex="0"
+      aria-label="${titleText} 다시보기"
+    >
       <div class="list-item-top">
         <div>
-          <p class="list-item-title">${escapeHtmlText(item.title || "제목 없음")}</p>
+          <p class="list-item-title">${titleText}</p>
           <div class="list-item-tags">${tags}</div>
         </div>
         <span class="list-item-date">${dateLabel}</span>
@@ -117,4 +185,33 @@ function formatHistoryItemHtml(item) {
       ${noteBlock}
     </div>
   `;
+}
+
+// 기록 목록(recent-list / mypage-recent-list) 클릭 시 해당 기록을
+// "다시보기" 모드로 lesson.html부터 다시 훑을 수 있게 한다.
+function goToReview(id) {
+  if (!id) return;
+  startReviewMode(id);
+  window.location.href = "lesson.html";
+}
+
+function attachHistoryListNavigation(container) {
+  if (!container || container.dataset.reviewNavBound) return;
+  container.dataset.reviewNavBound = "true";
+
+  container.addEventListener("click", (event) => {
+    if (event.target.closest("details")) return;
+    const item = event.target.closest(".list-item[data-history-id]");
+    if (!item) return;
+    goToReview(item.dataset.historyId);
+  });
+
+  container.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    if (event.target.closest("details")) return;
+    const item = event.target.closest(".list-item[data-history-id]");
+    if (!item) return;
+    event.preventDefault();
+    goToReview(item.dataset.historyId);
+  });
 }

@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const chipRow = document.getElementById("chip-row");
   const prevBtn = document.getElementById("prev-btn");
   const finishBtn = document.getElementById("finish-btn");
+  const reviewBadge = document.getElementById("review-badge");
+
+  if (isReviewMode() && reviewBadge) {
+    reviewBadge.style.display = "inline-flex";
+  }
 
   function escapeHtml(str) {
     const div = document.createElement("div");

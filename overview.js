@@ -1,4 +1,4 @@
-// overview.html — lesson.html에서 학습한 핵심 개념을 바탕으로 기사 전체 흐름을 3문단으로 재정리
+// overview.html — lesson.html에서 학습한 핵심 개념을 바탕으로 기사 전체 흐름을 5줄 이내로 재정리
 
 document.addEventListener("DOMContentLoaded", () => {
   const loadingState = document.getElementById("loading-state");
@@ -10,6 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const overviewDisclaimer = document.getElementById("overview-disclaimer");
   const overviewActions = document.getElementById("overview-actions");
   const nextBtn = document.getElementById("next-btn");
+  const reviewBadge = document.getElementById("review-badge");
+
+  if (isReviewMode() && reviewBadge) {
+    reviewBadge.style.display = "inline-flex";
+  }
 
   function showState(state) {
     loadingState.style.display = state === "loading" ? "flex" : "none";
@@ -21,16 +26,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderOverview(overview) {
     overviewText.innerHTML = "";
+    const list = document.createElement("ul");
+    list.className = "overview-list";
     overview
-      .split(/\n\s*\n/)
-      .map((p) => p.trim())
+      .split("\n")
+      .map((line) => line.trim())
       .filter(Boolean)
-      .forEach((paragraph) => {
-        const p = document.createElement("p");
-        p.className = "overview-paragraph";
-        p.textContent = paragraph;
-        overviewText.appendChild(p);
+      .forEach((line) => {
+        const li = document.createElement("li");
+        li.className = "overview-line";
+        li.textContent = line;
+        list.appendChild(li);
       });
+    overviewText.appendChild(list);
   }
 
   nextBtn.addEventListener("click", () => {
@@ -101,6 +109,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (cachedOverview) {
       renderOverview(cachedOverview);
       showState("content");
+      return;
+    }
+
+    if (isReviewMode()) {
+      goToWithMessage(
+        "mypage.html",
+        "마이페이지로 가기",
+        "이 기록에는 저장된 기사 요약이 없어요."
+      );
       return;
     }
 
