@@ -906,6 +906,65 @@ button {
   font-weight: 500;
 }
 
+.stat-card--blue {
+  background: #eaf1ff;
+  border-color: #d3e2ff;
+}
+
+.stat-card--blue .stat-value {
+  color: #1d4ed8;
+}
+
+.stat-card--green {
+  background: #e6f8ed;
+  border-color: #c8f0d7;
+}
+
+.stat-card--green .stat-value {
+  color: #15803d;
+}
+
+.stat-card--orange {
+  background: #fef1e6;
+  border-color: #fbdfc2;
+}
+
+.stat-card--orange .stat-value {
+  color: #c2410c;
+}
+
+.stat-card--purple {
+  background: #f1ecfd;
+  border-color: #e0d3fb;
+}
+
+.stat-card--purple .stat-value {
+  color: #6d28d9;
+}
+
+.stat-progress-track {
+  margin-top: 14px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(194, 65, 12, 0.15);
+  overflow: hidden;
+}
+
+.stat-progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: #f97316;
+  transition: width 0.3s ease;
+}
+
+.stat-progress-message {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
 /* ---------------------------------- Empty helper ---------------------------------- */
 
 .hint-box {

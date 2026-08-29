@@ -1,5 +1,7 @@
 // mypage.html — localStorage에 쌓인 학습 기록/통계를 렌더링
 
+const WEEKLY_GOAL = 3;
+
 document.addEventListener("DOMContentLoaded", () => {
   renderNickname();
   renderStats();
@@ -25,8 +27,25 @@ function renderStats() {
   const stats = getStats();
   document.getElementById("stat-summaries").innerHTML = `${stats.totalSummaries}<span class="stat-unit">건</span>`;
   document.getElementById("stat-points").innerHTML = `${stats.totalPointsUnderstood}<span class="stat-unit">개</span>`;
-  document.getElementById("stat-weekly").innerHTML = `${stats.weeklyCount}<span class="stat-unit">회</span>`;
   document.getElementById("stat-streak").innerHTML = `${stats.streakDays}<span class="stat-unit">일</span>`;
+  renderWeeklyProgress(stats.weeklyCount);
+}
+
+function renderWeeklyProgress(weeklyCount) {
+  document.getElementById("stat-weekly").textContent = `${weeklyCount} / ${WEEKLY_GOAL}`;
+
+  const progressPercent = Math.min(weeklyCount / WEEKLY_GOAL, 1) * 100;
+  document.getElementById("stat-weekly-progress-fill").style.width = `${progressPercent}%`;
+
+  let message;
+  if (weeklyCount < WEEKLY_GOAL) {
+    message = `목표까지 ${WEEKLY_GOAL - weeklyCount}개 남았어요!`;
+  } else if (weeklyCount === WEEKLY_GOAL) {
+    message = "이번 주 목표를 달성했어요! 🎉";
+  } else {
+    message = "이번 주 목표를 넘었어요! 대단해요 🔥";
+  }
+  document.getElementById("stat-weekly-message").textContent = message;
 }
 
 function renderRecentList() {

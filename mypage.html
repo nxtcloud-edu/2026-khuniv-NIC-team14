@@ -57,19 +57,23 @@
       </header>
 
       <div class="stat-grid">
-        <div class="stat-card">
+        <div class="stat-card stat-card--blue">
           <div class="stat-value" id="stat-summaries">0<span class="stat-unit">건</span></div>
           <p class="stat-label">직접 정리한 뉴스 수</p>
         </div>
-        <div class="stat-card">
+        <div class="stat-card stat-card--green">
           <div class="stat-value" id="stat-points">0<span class="stat-unit">개</span></div>
           <p class="stat-label">이해한 핵심 포인트 수</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="stat-weekly">0<span class="stat-unit">회</span></div>
+        <div class="stat-card stat-card--orange">
+          <div class="stat-value" id="stat-weekly">0 / 3</div>
           <p class="stat-label">이번 주 학습 수</p>
+          <div class="stat-progress-track">
+            <div class="stat-progress-fill" id="stat-weekly-progress-fill"></div>
+          </div>
+          <p class="stat-progress-message" id="stat-weekly-message"></p>
         </div>
-        <div class="stat-card">
+        <div class="stat-card stat-card--purple">
           <div class="stat-value" id="stat-streak">0<span class="stat-unit">일</span></div>
           <p class="stat-label">연속 학습일</p>
         </div>
