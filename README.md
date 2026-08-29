@@ -24,11 +24,14 @@
 - **기사 붙여넣기**: 읽고 싶은 경제 뉴스 본문을 그대로 입력
 - **AI 핵심 포인트 선정**: Gemini API가 이해에 꼭 필요한 개념 1~3개를 자동 선별
 - **4단 학습 카드**: 개념 정의 → 초등학생도 이해할 수 있는 쉬운 설명 → 기사 속 맥락 → 경제적 영향
-- **뉴스 다시 이해하기**: 학습한 개념을 바탕으로 기사 전체 흐름을 3문단으로 다시 정리
+- **뉴스 다시 이해하기**: 학습한 개념을 바탕으로 기사 전체 흐름을 다시 요약
 - **OX 퀴즈**: 핵심 포인트 개수만큼 이해도를 확인하는 퀴즈
 - **내 말로 정리하기(선택)**: 학습을 마친 뒤 스스로 기사를 요약해보는 능동적 학습 단계
-- **마이페이지**: 직접 정리한 뉴스 수, 이해한 핵심 포인트 수, 연속 학습일 등 누적 기록 확인
+- **최근 학습 다시보기**: 마이페이지의 학습 기록을 클릭하면 API 재호출 없이 그때 학습한 내용(핵심 포인트·요약·퀴즈)을 그대로 다시 확인하고 퀴즈도 재응시 가능
+- **경제 상식 챗봇**: 특정 기사와 무관하게 경제 개념을 자유롭게 질문하고 답변받는 대화형 페이지
+- **마이페이지**: 닉네임 표시, 직접 정리한 뉴스 수·이해한 핵심 포인트 수·주간 목표 진행률·연속 학습일 등 누적 기록 확인
 - **학습 완료 축하 화면**: 학습을 습관처럼 가볍게 만드는 보상 연출
+- **반응형 디자인**: 데스크톱과 모바일 화면 크기에 맞춰 레이아웃 자동 전환
 
 ## 🖥 화면 구성
 
@@ -38,17 +41,21 @@
 | `nickname.html` | 닉네임 입력 (필수) |
 | `index.html` | 홈 — 기사 붙여넣기, 최근 학습 목록 |
 | `lesson.html` | AI 핵심 포인트 학습 (정의/쉬운설명/맥락/영향 4단 카드) |
-| `overview.html` | 뉴스 다시 이해하기 — 기사 전체 흐름 3문단 요약 |
+| `overview.html` | 뉴스 다시 이해하기 — 기사 전체 흐름 요약 |
 | `quiz.html` | OX 퀴즈 (핵심 포인트 개수만큼 출제) |
 | `summary.html` | 내 말로 정리하기 (선택) |
 | `complete.html` | 학습 완료 축하 화면 |
-| `mypage.html` | 마이페이지 — 누적 학습 통계, 지난 학습 기록 |
+| `mypage.html` | 마이페이지 — 누적 학습 통계, 지난 학습 기록, 다시보기 |
+| `chatbot.html` | 경제 상식 챗봇 — 자유 질문응답 |
 
 ## 🛠 기술 스택
 
 - **Frontend**: HTML / CSS / Vanilla JS (프레임워크 없이 경량 구현)
 - **AI**: Google Gemini API
-- **데이터 저장**: localStorage 기반 — 별도 서버/DB 없이 브라우저에 학습 기록을 영구 저장 (같은 브라우저 재방문 시에도 마이페이지 기록 유지)
+- **데이터 저장**:
+  - `localStorage` — 학습 기록, 통계, 닉네임 등 영구 저장 (같은 브라우저 재방문 시에도 유지)
+  - `sessionStorage` — 챗봇 대화, 페이지 간 임시 학습 데이터 (탭 종료 시 삭제)
+- **배포**: Vercel (빌드 시점에 환경변수로 API 키 주입)
 - **개발 도구**: Claude Code
 
 ## 🚀 로컬에서 실행하기 (ver.01)
@@ -79,15 +86,19 @@ open index.html
 ├── quiz.html / quiz.js           # OX 퀴즈
 ├── summary.html / summary.js     # 정리하기
 ├── complete.html / complete.js   # 학습 완료
-├── mypage.html / mypage.js       # 마이페이지
+├── mypage.html / mypage.js       # 마이페이지 (다시보기 포함)
+├── chatbot.html / chatbot.js     # 경제 상식 챗봇
 ├── script.js                     # AI 연동 공용 로직
-├── storage.js                    # localStorage 저장/조회 공용 로직
-├── style.css                     # 공통 스타일
+├── storage.js                    # localStorage/sessionStorage 저장·조회 공용 로직
+├── style.css                     # 공통 스타일 (반응형 포함)
 ├── config.example.js             # API 키 설정 템플릿
 ├── config.js                     # 실제 API 키 (git 미포함)
+├── build-config.js               # Vercel 배포 시 환경변수로 config.js 자동 생성
+├── package.json / vercel.json    # 배포 설정
 ├── assets/                       # 이미지 리소스
 └── docs/
-    └── requirements.md           # 요구사항 정의서
+    ├── requirements.md           # 요구사항 정의서
+    └── 발표자료.pdf              # 해커톤 발표자료
 ```
 
 ## 👥 팀 소개 — Team MuBIG
@@ -106,4 +117,5 @@ open index.html
 기존 뉴스 요약 앱들은 "요약" 또는 "퀴즈" 중 한 기능에 머물러 있습니다.
 뉴스레슨은 **이해 → 정리로 이어지는 학습 흐름**을 제공한다는 점에서 차별화됩니다.
 
-자세한 요구사항 정의는 [`docs/requirements.md`](./docs/requirements.md)를 참고하세요.
+- 📎 [발표자료 보기 (PDF)](./docs/발표자료.pdf)
+- 자세한 요구사항 정의는 [`docs/requirements.md`](./docs/requirements.md)를 참고하세요.
