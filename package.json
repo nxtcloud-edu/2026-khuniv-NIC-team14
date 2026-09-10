@@ -2,7 +2,7 @@
   "name": "nic-team14",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "build": "node build-config.js"
+  "dependencies": {
+    "@extractus/article-extractor": "^9.0.1"
   }
 }

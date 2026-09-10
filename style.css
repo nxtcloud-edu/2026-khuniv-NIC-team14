@@ -287,6 +287,21 @@ button {
   display: block;
 }
 
+.url-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.url-input-row .text-input {
+  flex: 1;
+}
+
+.url-input-row .btn {
+  flex-shrink: 0;
+  padding: 0 20px;
+}
+
 /* ---------------------------------- Standalone screens (splash / nickname) ---------------------------------- */
 
 .standalone-shell {
@@ -833,6 +848,19 @@ button {
   background: var(--color-primary-lighter);
   padding: 3px 10px;
   border-radius: 999px;
+}
+
+.list-item-source-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.list-item-source-link:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
 }
 
 .list-item details {

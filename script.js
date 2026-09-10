@@ -1,11 +1,9 @@
 // 뉴스레슨 — Gemini API 연동 공통 모듈
-// index.html, lesson.html, quiz.html, summary.html, complete.html, chatbot.html에서 공유해서 사용합니다.
+// index.html, lesson.html, overview.html, quiz.html, summary.html, complete.html, chatbot.html에서 공유해서 사용합니다.
+// 실제 Gemini 호출은 서버(/api/gemini)가 대신 해주기 때문에, 여기서는 API 키를 전혀 다루지 않습니다.
 
-const GEMINI_MODEL = "gemini-3.6-flash";
-const GEMINI_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/" +
-  GEMINI_MODEL +
-  ":generateContent";
+const API_PROXY_ENDPOINT = "/api/gemini";
+const CRAWL_PROXY_ENDPOINT = "/api/crawl";
 
 // ---------------------------------------------------------------------------
 // sessionStorage 키 — "지금 학습 중인 기사" 흐름 전용 임시 데이터.
@@ -14,6 +12,7 @@ const GEMINI_ENDPOINT =
 // ---------------------------------------------------------------------------
 const ARTICLE_STORAGE_KEY = "nl_article_text";
 const ARTICLE_TITLE_KEY = "nl_article_title";
+const ARTICLE_URL_KEY = "nl_article_url";
 const LESSON_POINTS_KEY = "nl_lesson_points";
 const LESSON_POINTS_FOR_KEY = "nl_lesson_points_for";
 const OVERVIEW_DATA_KEY = "nl_overview_data";
@@ -23,6 +22,7 @@ const QUIZ_DATA_FOR_KEY = "nl_quiz_data_for";
 const QUIZ_RESULT_KEY = "nl_quiz_result";
 const SUMMARY_TEXT_KEY = "nl_summary_text";
 const CHATBOT_HISTORY_KEY = "nl_chatbot_history";
+const ARTICLE_CHAT_HISTORY_PREFIX = "nl_article_chat_history_";
 
 const CHATBOT_SYSTEM_PROMPT = `당신은 경제 상식을 쉽게 설명해주는 AI 튜터입니다.
 사용자의 경제 관련 질문에 대해 정확하고 이해하기 쉽게 답변하세요.
@@ -32,6 +32,20 @@ const CHATBOT_SYSTEM_PROMPT = `당신은 경제 상식을 쉽게 설명해주는
 - 답변은 너무 길지 않게, 핵심 위주로 3~5문장 이내로 작성하세요
 - 경제와 무관한 질문(잡담, 다른 주제, 일상 대화 등)이 오면, 자연스럽게 넘기지 말고 "이 질문은 경제 관련 주제가 아니라서 답변드리기 어려워요"라는 취지로 명확히 알려주세요. 그 다음 원한다면 경제 관련 질문을 다시 해달라고 안내하세요.
 - 확실하지 않은 사실(최신 수치, 특정 날짜의 정확한 통계 등)에 대해서는 단정적으로 말하지 말고, 일반적인 원리 위주로 설명하세요`;
+
+function buildArticleChatSystemPrompt(articleText) {
+  return `${CHATBOT_SYSTEM_PROMPT}
+
+추가 규칙:
+- 사용자는 지금 아래 기사를 학습하는 중입니다. 질문이 이 기사와 관련 있다면 기사 내용을 우선 참고해서 답하세요.
+- 기사와 직접 관련 없는 일반적인 경제 질문이 오더라도 평소처럼 답변하세요.
+- 기사에 나오지 않은 내용을 추측해서 사실처럼 말하지 마세요. 기사에 없는 정보라면 그렇다고 밝히세요.
+
+현재 학습 중인 기사:
+"""
+${articleText}
+"""`;
+}
 
 function buildLessonPrompt(articleText) {
   return `당신은 경제 뉴스 학습을 도와주는 AI 튜터입니다.
@@ -231,40 +245,44 @@ function parseOverviewData(rawText) {
   return parsed.overview.trim();
 }
 
-function getApiKeyOrThrow() {
-  const apiKey = window.APP_CONFIG && window.APP_CONFIG.GEMINI_API_KEY;
-  if (!apiKey || apiKey === "your_api_key_here") {
-    throw new Error(
-      "GEMINI_API_KEY가 설정되지 않았습니다. config.js를 확인해주세요."
-    );
-  }
-  return apiKey;
-}
-
-async function callGemini(prompt) {
-  const apiKey = getApiKeyOrThrow();
-
+// ---------------------------------------------------------------------------
+// 서버(/api/gemini) 호출 — API 키는 서버 환경변수에만 존재하고 클라이언트로는
+// 절대 내려오지 않습니다. 예전에는 여기서 window.APP_CONFIG.GEMINI_API_KEY를
+// 읽어 Gemini 엔드포인트를 직접 호출했지만, 그 방식은 브라우저 개발자도구로
+// 키가 그대로 노출되는 문제가 있어 서버 프록시 방식으로 바꿨습니다.
+// ---------------------------------------------------------------------------
+async function callGeminiRaw(payload) {
   let response;
   try {
-    response = await fetch(`${GEMINI_ENDPOINT}?key=${encodeURIComponent(apiKey)}`, {
+    response = await fetch(API_PROXY_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
+      body: JSON.stringify(payload),
     });
   } catch (err) {
-    throw new Error("네트워크 오류로 Gemini API 요청에 실패했습니다: " + err.message);
+    throw new Error("네트워크 오류로 서버 요청에 실패했습니다: " + err.message);
+  }
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    // 응답 본문이 JSON이 아닌 경우 무시하고 아래에서 상태코드로 처리
   }
 
   if (!response.ok) {
-    const errorBody = await response.text().catch(() => "");
-    throw new Error(
-      `Gemini API 요청 실패 (status ${response.status}): ${errorBody}`
-    );
+    const message =
+      (data && typeof data.error === "string" && data.error) ||
+      (data && data.error && data.error.message) ||
+      `서버 요청 실패 (status ${response.status})`;
+    throw new Error(message);
   }
 
-  const data = await response.json();
+  return data;
+}
+
+async function callGemini(prompt) {
+  const data = await callGeminiRaw({ contents: [{ parts: [{ text: prompt }] }] });
   return extractGeminiText(data);
 }
 
@@ -283,36 +301,17 @@ async function fetchOverviewSummary(articleText, points) {
   return parseOverviewData(rawText);
 }
 
-async function callGeminiChat(messages) {
-  const apiKey = getApiKeyOrThrow();
-
+async function callGeminiChat(messages, systemPrompt) {
   const contents = messages.map((msg) => ({
     role: msg.role === "user" ? "user" : "model",
     parts: [{ text: msg.text }],
   }));
 
-  let response;
-  try {
-    response = await fetch(`${GEMINI_ENDPOINT}?key=${encodeURIComponent(apiKey)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: CHATBOT_SYSTEM_PROMPT }] },
-        contents,
-      }),
-    });
-  } catch (err) {
-    throw new Error("네트워크 오류로 Gemini API 요청에 실패했습니다: " + err.message);
-  }
+  const data = await callGeminiRaw({
+    contents,
+    systemInstruction: { parts: [{ text: systemPrompt || CHATBOT_SYSTEM_PROMPT }] },
+  });
 
-  if (!response.ok) {
-    const errorBody = await response.text().catch(() => "");
-    throw new Error(
-      `Gemini API 요청 실패 (status ${response.status}): ${errorBody}`
-    );
-  }
-
-  const data = await response.json();
   const text = extractGeminiText(data).trim();
   if (!text) {
     throw new Error("Gemini 응답이 비어 있습니다.");
@@ -322,4 +321,39 @@ async function callGeminiChat(messages) {
 
 async function fetchChatReply(messages) {
   return callGeminiChat(messages);
+}
+
+// 학습 중인 기사를 컨텍스트로 넣어 답하는 챗봇 (lesson/overview/summary 등에서 사용)
+async function fetchArticleChatReply(messages, articleText) {
+  return callGeminiChat(messages, buildArticleChatSystemPrompt(articleText));
+}
+
+// ---------------------------------------------------------------------------
+// 서버(/api/crawl) 호출 — 뉴스 기사 URL을 서버가 대신 가져와 본문 텍스트만 돌려줍니다.
+// ---------------------------------------------------------------------------
+async function fetchArticleFromUrl(url) {
+  let response;
+  try {
+    response = await fetch(CRAWL_PROXY_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    });
+  } catch (err) {
+    throw new Error("네트워크 오류로 서버 요청에 실패했습니다: " + err.message);
+  }
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    // ignore
+  }
+
+  if (!response.ok) {
+    const message = (data && data.error) || `서버 요청 실패 (status ${response.status})`;
+    throw new Error(message);
+  }
+
+  return data; // { title, text, source, url }
 }
