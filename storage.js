@@ -166,6 +166,18 @@ function formatHistoryItemHtml(item) {
     : "";
   const titleText = escapeHtmlText(item.title || "제목 없음");
   const historyId = escapeHtmlText(item.id || "");
+  const sourceUrl = typeof item.url === "string" ? item.url.trim() : "";
+  // 원문 링크는 새 탭으로 열리는 별도 <a> 태그라 카드 자체의 "다시보기" 클릭과
+  // 겹치지 않도록 stopPropagation으로 분리한다.
+  const sourceLink = sourceUrl
+    ? `<a
+         class="list-item-source-link"
+         href="${escapeHtmlText(sourceUrl)}"
+         target="_blank"
+         rel="noopener noreferrer"
+         onclick="event.stopPropagation()"
+       >원문 보기 ↗</a>`
+    : "";
 
   return `
     <div
@@ -182,6 +194,7 @@ function formatHistoryItemHtml(item) {
         </div>
         <span class="list-item-date">${dateLabel}</span>
       </div>
+      ${sourceLink}
       ${noteBlock}
     </div>
   `;

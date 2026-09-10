@@ -61,10 +61,24 @@
 
       <section class="card">
         <h2 class="section-title">기사 본문 붙여넣기</h2>
+
+        <div class="url-input-row">
+          <input
+            type="url"
+            class="text-input"
+            id="article-url-input"
+            placeholder="기사 URL을 붙여넣으면 본문을 자동으로 가져와요 (선택)"
+            autocomplete="off"
+          />
+          <button type="button" id="fetch-url-btn" class="btn btn-secondary">가져오기</button>
+        </div>
+        <p class="field-error" id="url-fetch-message"></p>
+
         <textarea
           class="textarea"
           placeholder="여기에 경제 뉴스 기사 본문을 붙여넣어 주세요. (최대 10,000자)"
           maxlength="10000"
+          style="margin-top: 14px;"
         ></textarea>
         <div class="field-meta">
           <span id="char-counter">0 / 10,000자</span>
@@ -84,7 +98,6 @@
   </main>
 
 </div>
-<script src="config.js"></script>
 <script src="script.js"></script>
 <script src="index.js"></script>
 </body>

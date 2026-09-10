@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const articleText = sessionStorage.getItem(ARTICLE_STORAGE_KEY);
   const articleTitle = sessionStorage.getItem(ARTICLE_TITLE_KEY) || "";
+  const articleUrl = sessionStorage.getItem(ARTICLE_URL_KEY) || "";
   const summaryText = sessionStorage.getItem(SUMMARY_TEXT_KEY) || "";
 
   let points = [];
@@ -87,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tags: pointTitles.slice(0, 3),
         articleText,
         articleTitle,
+        url: articleUrl,
         points,
         overview: overviewText,
         quiz: quizQuestions,
