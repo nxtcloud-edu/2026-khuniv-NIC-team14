@@ -1,8 +1,5 @@
 {
   "name": "nic-team14",
   "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "@extractus/article-extractor": "^9.0.1"
-  }
+  "private": true
 }
