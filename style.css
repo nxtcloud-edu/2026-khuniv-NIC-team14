@@ -50,6 +50,12 @@ button {
   font-family: inherit;
 }
 
+/* auth.js가 로그인 세션을 확인하는 동안 보호된 페이지 내용이 잠깐 보였다 사라지는
+   깜빡임을 막기 위해 화면을 숨긴다. 세션 확인이 끝나면 auth.js가 이 클래스를 지운다. */
+html.auth-pending {
+  visibility: hidden;
+}
+
 /* ---------------------------------- Layout ---------------------------------- */
 
 .app-shell {
@@ -144,6 +150,22 @@ button {
   color: var(--color-text-muted);
   font-size: 12.5px;
   line-height: 1.5;
+}
+
+/* auth.js가 로그인된 페이지의 .nav 맨 끝에 동적으로 삽입하는 로그아웃 탭.
+   <button>이지만 .nav-link(<a>)와 똑같이 보이도록 기본 버튼 스타일만 초기화한다. */
+.logout-nav-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14.5px;
+}
+
+.logout-nav-btn:hover {
+  background: var(--color-primary-lighter);
+  color: var(--color-primary-dark);
 }
 
 .main {
@@ -337,14 +359,31 @@ button {
   margin-bottom: 28px;
 }
 
-.nickname-form {
+.auth-form {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.nickname-form .btn {
+.auth-field + .auth-field {
+  margin-top: 12px;
+}
+
+.auth-form .btn {
   margin-top: 20px;
+}
+
+.auth-success {
+  color: var(--color-success);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 10px 0 0;
+  text-align: left;
+}
+
+.auth-toggle-btn {
+  margin-top: 14px;
+  font-size: 13.5px;
 }
 
 /* ---------------------------------- Sidebar user (mypage) ---------------------------------- */

@@ -39,7 +39,7 @@
 | 화면 | 설명 |
 |---|---|
 | `splash.html` | 시작 화면 — 로고, 서비스명, 슬로건 |
-| `nickname.html` | 닉네임 입력 (필수) |
+| `login.html` | 이메일/비밀번호 로그인 · 회원가입 (Supabase Auth) |
 | `index.html` | 홈 — 기사 붙여넣기, 최근 학습 목록 |
 | `lesson.html` | AI 핵심 포인트 학습 (정의/쉬운설명/맥락/영향 4단 카드) |
 | `overview.html` | 뉴스 다시 이해하기 — 기사 전체 흐름 요약 |
@@ -53,8 +53,9 @@
 
 - **Frontend**: HTML / CSS / Vanilla JS (프레임워크 없이 경량 구현)
 - **AI**: Google Gemini API
+- **Auth & DB**: Supabase (Auth 이메일/비밀번호 로그인, Postgres + Row Level Security) — supabase-js를 CDN으로 로드해서 사용 (`supabase-config.js`, `auth.js`)
 - **데이터 저장**:
-  - `localStorage` — 학습 기록, 통계, 닉네임 등 저장 (같은 브라우저 재방문 시에도 유지)
+  - Supabase Postgres — 학습 기록(`history_entries`), 닉네임(`profiles`) — 로그인한 계정에 귀속, RLS로 본인 데이터만 접근 가능
   - `sessionStorage` — 챗봇 대화, 페이지 간 임시 학습 데이터 (탭 종료 시 삭제)
 - **배포**: Vercel (빌드 시점에 환경변수로 API 키 주입)
 - **개발 도구**: Claude Code
@@ -80,7 +81,7 @@ open index.html
 ```
 2026-khuniv-NIC-team14/
 ├── splash.html / splash.js       # 시작 화면
-├── nickname.html / nickname.js   # 닉네임 입력
+├── login.html / login.js         # 로그인 · 회원가입 (Supabase Auth)
 ├── index.html / index.js         # 홈
 ├── lesson.html / lesson.js       # 핵심 포인트 학습
 ├── overview.html / overview.js   # 뉴스 다시 이해하기
@@ -90,7 +91,10 @@ open index.html
 ├── mypage.html / mypage.js       # 마이페이지 (다시보기 포함)
 ├── chatbot.html / chatbot.js     # 경제 상식 챗봇
 ├── script.js                     # AI 연동 공용 로직
-├── storage.js                    # localStorage/sessionStorage 저장·조회 공용 로직
+├── storage.js                    # 학습 기록/통계/닉네임 조회·저장 (Supabase) + sessionStorage 헬퍼
+├── supabase-config.js            # Supabase Project URL / publishable key, 클라이언트 초기화
+├── auth.js                       # 로그인 필요 페이지 가드 + 로그아웃
+├── supabase/migration.sql        # profiles/history_entries 테이블, RLS 정책, Data API 노출 설정
 ├── style.css                     # 공통 스타일 (반응형 포함)
 ├── config.example.js             # API 키 설정 템플릿
 ├── config.js                     # 실제 API 키 (git 미포함)

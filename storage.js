@@ -1,10 +1,13 @@
-// 뉴스레슨 — 학습 기록 & 통계 영구 저장 모듈 (localStorage)
-// index.html, mypage.html, complete.html에서 공유해서 사용합니다.
-// 브라우저를 껐다 켜도 유지되어야 하는 데이터만 여기서 다룬다.
-
-const HISTORY_STORAGE_KEY = "newsLessonHistory";
-const STATS_STORAGE_KEY = "newsLessonStats";
-const NICKNAME_STORAGE_KEY = "newsLessonNickname";
+// 뉴스레슨 — 학습 기록 & 통계 영구 저장 모듈 (Supabase Postgres)
+// index.html, mypage.html, complete.html, lesson.html에서 공유해서 사용합니다.
+// 이 파일보다 먼저 supabase-config.js(전역 supabaseClient)와 auth.js가 로드되어 있어야 합니다.
+//
+// 예전에는 localStorage(newsLessonHistory/newsLessonStats/newsLessonNickname)에
+// 저장했지만, 로그인한 계정에 귀속시키기 위해 profiles/history_entries 테이블로
+// 옮겼습니다 (테이블 정의는 supabase/migration.sql 참고). 통계는 별도 테이블 없이
+// 매번 history_entries를 읽어 computeStats()로 즉석에서 계산합니다 — 예전에도
+// STATS_STORAGE_KEY는 쓰기만 하고 읽지는 않아서, 사실상 항상 getHistory()로부터
+// 파생된 값이었습니다.
 
 // ---------------------------------------------------------------------------
 // "최근 학습 다시보기" 모드 — sessionStorage 플래그.
@@ -32,59 +35,105 @@ function endReviewMode() {
   sessionStorage.removeItem(REVIEW_ID_KEY);
 }
 
-function getNickname() {
-  return (localStorage.getItem(NICKNAME_STORAGE_KEY) || "").trim();
+// 현재 로그인한 사용자의 id. 로그인 세션이 없으면 null
+// (auth.js의 페이지 가드를 통과했다면 보통 항상 값이 있다).
+async function getCurrentUserId() {
+  const { data } = await supabaseClient.auth.getSession();
+  return data.session ? data.session.user.id : null;
 }
 
-function setNickname(nickname) {
-  localStorage.setItem(NICKNAME_STORAGE_KEY, nickname);
+async function getNickname() {
+  const userId = await getCurrentUserId();
+  if (!userId) return "";
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("nickname")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error || !data) return "";
+  return (data.nickname || "").trim();
 }
 
-function getHistory() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || "[]");
-    return ensureHistoryIds(Array.isArray(parsed) ? parsed : []);
-  } catch {
+// history_entries 테이블의 snake_case 컬럼을 앱 전역에서 쓰던 camelCase entry 모양으로 되돌린다.
+function mapHistoryRow(row) {
+  return {
+    id: row.id,
+    title: row.title,
+    date: row.date,
+    pointsCount: row.points_count,
+    quizScore: row.quiz_score,
+    summary: row.summary,
+    tags: row.tags || [],
+    articleText: row.article_text,
+    articleTitle: row.article_title,
+    url: row.url,
+    points: row.points || [],
+    overview: row.overview || "",
+    quiz: row.quiz || [],
+  };
+}
+
+async function getHistory() {
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
+  const { data, error } = await supabaseClient
+    .from("history_entries")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("[storage] 학습 기록을 불러오지 못했습니다:", error.message);
     return [];
   }
+  return (data || []).map(mapHistoryRow);
 }
 
-function saveHistory(history) {
-  localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
-}
-
-// 이 기능 이전에 저장된 기록에는 id가 없을 수 있으므로, 없으면 채워 넣고
-// 즉시 영구 저장한다. "다시보기" 클릭 시 기록을 식별하는 데 id가 필요하다.
-function ensureHistoryIds(history) {
-  let changed = false;
-  history.forEach((item, index) => {
-    if (!item.id) {
-      item.id = `legacy-${Date.now()}-${index}`;
-      changed = true;
-    }
-  });
-  if (changed) saveHistory(history);
-  return history;
-}
-
-function getHistoryItemById(id) {
+async function getHistoryItemById(id) {
   if (!id) return null;
-  return getHistory().find((item) => item.id === id) || null;
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+
+  const { data, error } = await supabaseClient
+    .from("history_entries")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return mapHistoryRow(data);
 }
 
 // review 모드로 학습 완료 시 새 기록을 추가하는 대신 기존 기록을 갱신한다
 // (통계가 중복으로 늘어나지 않도록).
-function updateHistoryEntry(id, patch) {
-  const history = getHistory();
-  const index = history.findIndex((item) => item.id === id);
-  if (index === -1) return null;
+async function updateHistoryEntry(id, patch) {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
 
-  history[index] = { ...history[index], ...patch };
-  saveHistory(history);
+  const dbPatch = {};
+  if ("summary" in patch) dbPatch.summary = patch.summary;
+  if ("quizScore" in patch) dbPatch.quiz_score = patch.quizScore;
+  if ("points" in patch) dbPatch.points = patch.points;
+  if ("overview" in patch) dbPatch.overview = patch.overview;
+  if ("quiz" in patch) dbPatch.quiz = patch.quiz;
 
-  const stats = computeStats(history);
-  localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-  return history[index];
+  const { data, error } = await supabaseClient
+    .from("history_entries")
+    .update(dbPatch)
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select()
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("[storage] 학습 기록 갱신 실패:", error && error.message);
+    return null;
+  }
+  return mapHistoryRow(data);
 }
 
 function computeStreakDays(dateStrings) {
@@ -128,23 +177,44 @@ function computeStats(history) {
   return { totalSummaries, totalPointsUnderstood, weeklyCount, streakDays };
 }
 
-function getStats() {
-  return computeStats(getHistory());
+async function getStats() {
+  return computeStats(await getHistory());
 }
 
-function addHistoryEntry(entry) {
-  const history = getHistory();
-  history.unshift(entry);
-  saveHistory(history);
+async function addHistoryEntry(entry) {
+  const userId = await getCurrentUserId();
+  if (!userId) return computeStats([]);
 
-  const stats = computeStats(history);
-  localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-  return stats;
+  const { error } = await supabaseClient.from("history_entries").insert({
+    user_id: userId,
+    title: entry.title,
+    date: entry.date,
+    points_count: entry.pointsCount,
+    quiz_score: entry.quizScore,
+    summary: entry.summary,
+    tags: entry.tags,
+    article_text: entry.articleText,
+    article_title: entry.articleTitle,
+    url: entry.url,
+    points: entry.points,
+    overview: entry.overview,
+    quiz: entry.quiz,
+  });
+
+  if (error) {
+    console.error("[storage] 학습 기록 저장 실패:", error.message);
+  }
+  return await getStats();
 }
 
-function clearAllHistory() {
-  localStorage.removeItem(HISTORY_STORAGE_KEY);
-  localStorage.removeItem(STATS_STORAGE_KEY);
+async function clearAllHistory() {
+  const userId = await getCurrentUserId();
+  if (!userId) return;
+
+  const { error } = await supabaseClient.from("history_entries").delete().eq("user_id", userId);
+  if (error) {
+    console.error("[storage] 학습 기록 초기화 실패:", error.message);
+  }
 }
 
 function escapeHtmlText(str) {

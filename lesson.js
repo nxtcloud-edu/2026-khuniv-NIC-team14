@@ -1,6 +1,6 @@
 // lesson.html — 저장된 기사로 Gemini API를 호출하고 핵심 포인트를 카드로 보여줌
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const loadingState = document.getElementById("loading-state");
   const errorState = document.getElementById("error-state");
   const errorMessage = document.getElementById("error-message");
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (isReviewMode()) {
     if (reviewBadge) reviewBadge.style.display = "inline-flex";
 
-    const entry = getHistoryItemById(getReviewId());
+    const entry = await getHistoryItemById(getReviewId());
     if (entry && entry.articleText && Array.isArray(entry.points) && entry.points.length > 0) {
       seedReviewSession(entry);
     } else {

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>뉴스레슨 — 로그인</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="standalone-shell">
+  <div class="standalone-card">
+    <h1 class="page-title standalone-title" id="auth-title">다시 오셨네요</h1>
+    <p class="page-subtitle standalone-subtitle" id="auth-subtitle">이메일과 비밀번호로 로그인해주세요.</p>
+
+    <form id="auth-form" class="auth-form" novalidate>
+      <div class="auth-field" id="nickname-field" style="display: none;">
+        <input
+          type="text"
+          id="nickname-input"
+          class="text-input"
+          placeholder="닉네임 (예: 뉴스러버)"
+          maxlength="20"
+          autocomplete="nickname"
+        />
+      </div>
+      <div class="auth-field">
+        <input
+          type="email"
+          id="email-input"
+          class="text-input"
+          placeholder="이메일"
+          autocomplete="email"
+        />
+      </div>
+      <div class="auth-field">
+        <input
+          type="password"
+          id="password-input"
+          class="text-input"
+          placeholder="비밀번호 (6자 이상)"
+          autocomplete="current-password"
+        />
+      </div>
+
+      <p class="field-error" id="auth-error"></p>
+      <p class="auth-success" id="auth-success" style="display: none;"></p>
+
+      <button type="submit" class="btn btn-primary btn-block" id="auth-submit-btn">로그인</button>
+    </form>
+
+    <button type="button" class="btn btn-ghost auth-toggle-btn" id="auth-toggle-btn">
+      계정이 없으신가요? 회원가입
+    </button>
+  </div>
+</div>
+<script src="login.js"></script>
+</body>
+</html>

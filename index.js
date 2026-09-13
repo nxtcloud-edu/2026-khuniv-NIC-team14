@@ -87,11 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRecentList();
 });
 
-function renderRecentList() {
+async function renderRecentList() {
   const container = document.getElementById("recent-list");
   if (!container) return;
 
-  const history = getHistory();
+  const history = await getHistory();
 
   if (history.length === 0) {
     container.innerHTML = `
