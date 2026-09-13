@@ -8,23 +8,23 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRecentList();
 
   const resetBtn = document.getElementById("reset-history-btn");
-  resetBtn.addEventListener("click", () => {
+  resetBtn.addEventListener("click", async () => {
     const confirmed = confirm("학습 기록을 모두 초기화할까요? 이 작업은 되돌릴 수 없어요.");
     if (!confirmed) return;
-    clearAllHistory();
+    await clearAllHistory();
     renderStats();
     renderRecentList();
   });
 });
 
-function renderNickname() {
-  const nickname = getNickname() || "게스트";
+async function renderNickname() {
+  const nickname = (await getNickname()) || "게스트";
   document.getElementById("sidebar-user-name").textContent = nickname;
   document.getElementById("mypage-title").textContent = `${nickname}님의 학습 기록이에요`;
 }
 
-function renderStats() {
-  const stats = getStats();
+async function renderStats() {
+  const stats = await getStats();
   document.getElementById("stat-summaries").innerHTML = `${stats.totalSummaries}<span class="stat-unit">건</span>`;
   document.getElementById("stat-points").innerHTML = `${stats.totalPointsUnderstood}<span class="stat-unit">개</span>`;
   document.getElementById("stat-streak").innerHTML = `${stats.streakDays}<span class="stat-unit">일</span>`;
@@ -48,9 +48,9 @@ function renderWeeklyProgress(weeklyCount) {
   document.getElementById("stat-weekly-message").textContent = message;
 }
 
-function renderRecentList() {
+async function renderRecentList() {
   const container = document.getElementById("mypage-recent-list");
-  const history = getHistory();
+  const history = await getHistory();
 
   if (history.length === 0) {
     container.innerHTML = `

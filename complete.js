@@ -1,6 +1,6 @@
 // complete.html — 학습 완료 시점에 임시(sessionStorage) 데이터를 영구(localStorage) 기록으로 저장
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const eyebrow = document.getElementById("celebrate-eyebrow");
   const subtitle = document.getElementById("celebrate-subtitle");
   const streakBadge = document.getElementById("streak-badge");
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (reviewMode && reviewId) {
       // 다시보기 완료 시에는 새 기록을 추가하지 않고 기존 기록만 갱신한다
       // (통계가 중복으로 늘어나지 않도록).
-      updateHistoryEntry(reviewId, {
+      await updateHistoryEntry(reviewId, {
         summary: summaryText,
         quizScore: quizResult,
         points,
@@ -78,8 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       endReviewMode();
     } else {
-      addHistoryEntry({
-        id: `${Date.now()}`,
+      // id는 지정하지 않는다 — history_entries.id는 DB가 uuid로 자동 생성한다.
+      await addHistoryEntry({
         title: articleTitle || articleText.slice(0, 30),
         date: new Date().toISOString().slice(0, 10),
         pointsCount,
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.setItem(HISTORY_COMMITTED_FOR_KEY, articleText);
   }
 
-  const stats = getStats();
+  const stats = await getStats();
   if (stats.streakDays > 0) {
     streakBadge.textContent = `🔥 연속 학습 ${stats.streakDays}일째`;
     streakBadge.style.display = "inline-flex";
