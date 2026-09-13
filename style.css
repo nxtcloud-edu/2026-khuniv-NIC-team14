@@ -1251,6 +1251,14 @@ button {
   padding: 18px;
 }
 
+/* 위젯이 떠 있는 페이지(lesson/overview/summary)에서는 하단 CTA 버튼이 플로팅 버튼과
+   겹치지 않도록 .main에 여분의 하단 여백을 확보한다. 원래 .main의 padding-bottom(80px)이
+   fab의 위쪽 끝(bottom 24px + height 56px = 80px)과 정확히 맞닿아 있어서, 뷰포트 높이나
+   렌더링 오차에 따라 버튼 오른쪽 끝이 fab에 가려 클릭이 막히는 문제가 있었다. */
+body.has-article-chat-widget .main {
+  padding-bottom: 130px;
+}
+
 /* ---------------------------------- Responsive ---------------------------------- */
 
 @media (max-width: 860px) {
@@ -1404,6 +1412,12 @@ button {
 
   .article-chat-panel {
     height: min(60vh, calc(100vh - 200px));
+  }
+
+  /* fab이 76~132px(+safe area) 구간을 차지하므로, 그 위로 CTA 버튼이 올라오지 않게
+     .main 하단 여백을 더 크게 잡는다. */
+  body.has-article-chat-widget .main {
+    padding-bottom: calc(168px + env(safe-area-inset-bottom, 0px));
   }
 }
 

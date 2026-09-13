@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const widget = buildWidget();
   document.body.appendChild(widget.root);
+  // 페이지 하단 CTA 버튼(다음 포인트/퀴즈 풀러 가기 등)과 겹치지 않도록,
+  // 위젯이 실제로 떠 있는 페이지에서만 .main에 여분의 하단 여백을 준다 (style.css 참고).
+  document.body.classList.add("has-article-chat-widget");
   renderMessages();
 
   widget.fab.addEventListener("click", () => {
