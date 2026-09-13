@@ -1138,6 +1138,119 @@ button {
   font-size: 13px;
 }
 
+/* ---------------------------------- Article chat widget (lesson/overview/summary) ---------------------------------- */
+
+.article-chat-widget {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.article-chat-fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.article-chat-fab:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.article-chat-fab-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.article-chat-fab-icon-close {
+  display: none;
+}
+
+.article-chat-fab.is-open .article-chat-fab-icon-chat {
+  display: none;
+}
+
+.article-chat-fab.is-open .article-chat-fab-icon-close {
+  display: block;
+}
+
+.article-chat-panel {
+  display: none;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  width: min(380px, calc(100vw - 32px));
+  height: min(520px, calc(100vh - 140px));
+}
+
+.article-chat-panel.is-open {
+  display: flex;
+}
+
+.article-chat-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.article-chat-panel-title {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.article-chat-panel-subtitle {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+.article-chat-close-btn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.article-chat-close-btn:hover {
+  background: var(--color-primary-lighter);
+  color: var(--color-text);
+}
+
+.article-chat-close-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.article-chat-messages {
+  padding: 18px;
+}
+
 /* ---------------------------------- Responsive ---------------------------------- */
 
 @media (max-width: 860px) {
@@ -1281,6 +1394,16 @@ button {
 
   .chat-bubble {
     max-width: 88%;
+  }
+
+  /* Article chat widget: clear the fixed bottom tab bar on mobile */
+  .article-chat-widget {
+    right: 16px;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .article-chat-panel {
+    height: min(60vh, calc(100vh - 200px));
   }
 }
 
