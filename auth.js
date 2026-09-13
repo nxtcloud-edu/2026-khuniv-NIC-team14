@@ -62,5 +62,14 @@ function injectLogoutButton() {
 }
 
 requireAuth().then((session) => {
-  if (session) injectLogoutButton();
+  if (!session) return;
+
+  // 이 스크립트는 <head>에서 로드되므로, requireAuth()의 비동기 세션 확인이
+  // 끝나는 시점에도 <body>가 아직 파싱 중이라 .nav가 없을 수 있다(레이스 컨디션).
+  // 그럴 때는 DOMContentLoaded까지 기다렸다가 붙인다.
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", injectLogoutButton);
+  } else {
+    injectLogoutButton();
+  }
 });
