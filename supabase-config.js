@@ -1,11 +1,13 @@
-// supabase-config.js — Supabase 프로젝트 접속 정보 & 클라이언트 초기화
-//
-// Project URL과 publishable(anon) key는 브라우저에 그대로 노출되어도 안전하도록
-// 설계된 공개 키입니다 (실제 접근 제어는 각 테이블의 Row Level Security 정책이 담당).
-// 이 파일보다 먼저 supabase-js UMD 번들(<script src=".../supabase.js">)이 로드되어
-// 전역 `supabase.createClient`가 존재해야 합니다.
+// 배포별 공개 설정은 Git 미추적 supabase-config.local.js에서 제공합니다.
+// publishable key는 브라우저에 공개됩니다. 실제 데이터 보호는 Auth와 RLS로 적용하세요.
+const newsLessonConfig = window.NEWSLESSON_PUBLIC_CONFIG || {};
+const SUPABASE_URL = newsLessonConfig.supabaseUrl || '';
+const SUPABASE_PUBLISHABLE_KEY = newsLessonConfig.supabasePublishableKey || '';
 
-const SUPABASE_URL = "https://xngmpufioscupyngqcup.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "REMOVED_REPOSITORY_KEY";
+const supabaseClient = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+if (!supabaseClient) {
+  console.warn('Supabase public configuration is missing; see README.md');
+}

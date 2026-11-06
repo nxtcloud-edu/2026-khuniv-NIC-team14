@@ -2,3 +2,8 @@
 config.js
 node_modules/
 .DS_Store
+
+# Deployment-specific public client configuration
+supabase-config.local.js
+.env.*
+!.env.example

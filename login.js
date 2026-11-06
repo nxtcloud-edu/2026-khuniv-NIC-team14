@@ -1,6 +1,14 @@
 // login.html — Supabase Auth 이메일/비밀번호 로그인 · 회원가입
 
 document.addEventListener("DOMContentLoaded", async () => {
+  if (!supabaseClient) {
+    const errorEl = document.getElementById("auth-error");
+    errorEl.textContent = "서비스 연결 설정이 필요합니다. 운영자에게 문의해 주세요.";
+    errorEl.classList.add("visible");
+    document.getElementById("auth-submit-btn").disabled = true;
+    return;
+  }
+
   // 이미 로그인되어 있다면 로그인 화면을 보여줄 필요가 없다.
   // (세션 확인 자체가 실패해도 로그인 폼은 정상적으로 쓸 수 있어야 하므로 여기서 막지 않는다.)
   try {

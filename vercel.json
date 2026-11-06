@@ -4,5 +4,6 @@
     "api/*.js": {
       "maxDuration": 60
     }
-  }
+  },
+  "buildCommand": "node scripts/build-public-config.cjs"
 }

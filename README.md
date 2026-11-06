@@ -60,21 +60,32 @@
 - **배포**: Vercel (빌드 시점에 환경변수로 API 키 주입)
 - **개발 도구**: Claude Code
 
-## 🚀 로컬에서 실행하기 (ver.01)
+## 🚀 로컬에서 실행하기
+
+1. `supabase-config.example.js`를 `supabase-config.local.js`로 복사합니다.
+2. 본인 프로젝트의 Supabase URL과 **publishable key**만 입력합니다.
+3. 정적 파일을 로컬 HTTP 서버로 제공합니다. 로그인/데이터는 Supabase Auth와 RLS를 사용합니다.
+4. Gemini 호출은 `api/gemini.js` 서버 함수가 처리합니다. 실제 호출에는 해당 함수가 실행되는
+   개발/배포 환경에 `GEMINI_API_KEY`를 설정해야 합니다. 이 비밀키를 HTML/JS 설정에 넣지 마세요.
 
 ```bash
-git clone https://github.com/nxtcloud-edu/2026-khuniv-NIC-team14.git
-cd 2026-khuniv-NIC-team14
-
-# API 키 설정
-cp config.example.js config.js
-# config.js를 열어 본인의 Gemini API 키를 입력하세요
-
-# 브라우저로 열기
-open index.html
+cp supabase-config.example.js supabase-config.local.js
+python3 -m http.server 3000
 ```
 
-> Gemini API 키는 [Google AI Studio](https://aistudio.google.com)에서 무료로 발급받을 수 있습니다.
+### Vercel 배포
+
+프로젝트 환경변수에 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, 서버 전용
+`GEMINI_API_KEY`를 설정합니다. 빌드가 앞의 두 공개 설정만 사용하여
+`supabase-config.local.js`를 생성합니다. 누락되거나 publishable key 형식이 아니면 빌드는 실패합니다.
+서비스 역할 키와 비밀키는 브라우저 설정에 사용할 수 없습니다.
+생성된 클라이언트 설정은 브라우저에 공개되므로 DB 보호에는 RLS가 필수입니다.
+
+### 키 제거와 기존 사본
+
+저장소에 포함되어 있던 실제 Supabase 공개 키를 제거했습니다. 실제 설정 파일은 Git에서 제외됩니다.
+기존 키를 폐기/교체할 필요가 있는지는 프로젝트 소유자가 Supabase에서 확인해야 합니다.
+기존 배포 파일과 외부 사본은 Git 이력 수정만으로 갱신되지 않으므로 별도로 재배포하세요.
 
 ## 📁 프로젝트 구조
 
@@ -92,13 +103,13 @@ open index.html
 ├── chatbot.html / chatbot.js     # 경제 상식 챗봇
 ├── script.js                     # AI 연동 공용 로직
 ├── storage.js                    # 학습 기록/통계/닉네임 조회·저장 (Supabase) + sessionStorage 헬퍼
-├── supabase-config.js            # Supabase Project URL / publishable key, 클라이언트 초기화
+├── supabase-config.js            # 외부 공개 설정을 읽는 클라이언트 초기화
 ├── auth.js                       # 로그인 필요 페이지 가드 + 로그아웃
 ├── supabase/migration.sql        # profiles/history_entries 테이블, RLS 정책, Data API 노출 설정
 ├── style.css                     # 공통 스타일 (반응형 포함)
-├── config.example.js             # API 키 설정 템플릿
-├── config.js                     # 실제 API 키 (git 미포함)
-├── build-config.js               # Vercel 배포 시 환경변수로 config.js 자동 생성
+├── supabase-config.example.js    # 실제 값 없는 공개 설정 예제
+├── supabase-config.local.js      # 환경별 공개 설정 (Git 미포함)
+├── scripts/build-public-config.cjs # 공개 설정만 배포 시 생성
 ├── package.json / vercel.json    # 배포 설정
 ├── assets/                       # 이미지 리소스
 └── docs/
